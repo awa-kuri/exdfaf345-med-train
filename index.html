@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>薬匣</title>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="theme-color" content="#f4f7fa">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #f4f7fa;
+            --bg-warm: #eef2f7;
+            --card: #ffffff;
+            --card-shadow: 0 2px 12px rgba(120,150,180,0.08);
+            --border: #e0e8f0;
+            --border-light: #eaf0f6;
+            --text: #34495e;
+            --text-secondary: #607080;
+            --text-muted: #95a5b5;
+            --text-faint: #bcc8d4;
+            --mint: #5bb5a6;
+            --mint-soft: #e8f5f2;
+            --mint-glow: #d2ede8;
+            --periwinkle: #7b8ec2;
+            --periwinkle-soft: #eef0f8;
+            --coral: #e08070;
+            --coral-soft: #fceae6;
+            --honey: #d4a555;
+            --honey-soft: #fdf4e2;
+            --sky: #6ea8d0;
+            --sky-soft: #e6f1f8;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            font-family: 'Zen Maru Gothic','Hiragino Maru Gothic Pro',sans-serif;
+            background:var(--bg); color:var(--text); line-height:1.7;
+            min-height:100vh; overflow-x:hidden; -webkit-text-size-adjust:100%;
+        }
+        .container { max-width:460px; margin:0 auto; padding:0 16px 100px; }
+        .header { text-align:center; padding:28px 0 6px; }
+        .header h1 { font-size:20px; font-weight:400; letter-spacing:0.8em; color:var(--mint); }
+        .tabs { display:flex; gap:6px; justify-content:center; margin-bottom:18px; position:sticky; top:0; background:var(--bg); z-index:10; padding:8px 0 6px; }
+        .tab { padding:8px 20px; background:var(--card); border:1px solid var(--border); border-radius:20px; color:var(--text-muted); cursor:pointer; font-size:12px; font-family:inherit; letter-spacing:0.04em; transition:all 0.2s; box-shadow:0 1px 3px rgba(0,0,0,0.03); }
+        .tab.active { background:var(--mint); color:#fff; border-color:var(--mint); box-shadow:0 2px 8px rgba(91,181,166,0.25); }
+        .panel { display:none; }
+        .panel.active { display:block; }
+        .visit-banner { background:linear-gradient(135deg,var(--sky-soft),var(--periwinkle-soft)); border:1px solid var(--border-light); border-radius:14px; padding:12px 16px; text-align:center; margin-bottom:16px; font-size:13px; color:var(--periwinkle); font-weight:500; }
+        .greeting { text-align:center; padding:8px 10px 8px; font-size:14px; color:var(--text-muted); line-height:1.9; }
+        .med-card { background:var(--card); border:1px solid var(--border-light); border-radius:16px; padding:18px; margin-bottom:14px; box-shadow:var(--card-shadow); position:relative; overflow:hidden; }
+        .med-card::before { content:''; position:absolute; top:0; left:0; width:4px; height:100%; border-radius:4px 0 0 4px; }
+        .med-card.color-mint::before { background:var(--mint); }
+        .med-card.color-periwinkle::before { background:var(--periwinkle); }
+        .med-card.color-honey::before { background:var(--honey); }
+        .med-card.color-sky::before { background:var(--sky); }
+        .med-card-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; padding-left:8px; }
+        .med-name { font-size:15px; font-weight:500; color:var(--text); }
+        .med-badge { font-size:11px; font-weight:500; padding:4px 12px; border-radius:20px; }
+        .med-badge.ok { background:var(--mint-soft); color:var(--mint); }
+        .med-badge.low { background:var(--honey-soft); color:var(--honey); }
+        .med-badge.critical { background:var(--coral-soft); color:var(--coral); }
+        .med-info { display:grid; grid-template-columns:1fr 1fr; gap:4px 12px; margin-bottom:12px; padding-left:8px; font-size:12px; }
+        .med-info-label { color:var(--text-muted); }
+        .med-info-value { color:var(--text-secondary); font-weight:500; }
+        .med-bar-wrap { margin-bottom:12px; padding:0 8px; }
+        .med-bar-label { display:flex; justify-content:space-between; font-size:10px; color:var(--text-muted); margin-bottom:4px; }
+        .med-bar-track { height:8px; background:var(--bg-warm); border-radius:4px; overflow:hidden; }
+        .med-bar-fill { height:100%; border-radius:4px; transition:width 0.4s; }
+        .med-bar-fill.ok { background:linear-gradient(90deg,var(--mint-glow),var(--mint)); }
+        .med-bar-fill.low { background:linear-gradient(90deg,#f5e6c8,var(--honey)); }
+        .med-bar-fill.critical { background:linear-gradient(90deg,#f5d0ca,var(--coral)); }
+        .med-actions { display:flex; gap:8px; padding:0 4px; }
+        .med-btn { flex:1; padding:10px; border-radius:12px; border:1px solid var(--border); background:var(--card); color:var(--text-secondary); font-size:13px; font-family:inherit; cursor:pointer; transition:all 0.15s; text-align:center; }
+        .med-btn:active { transform:scale(0.97); }
+        .med-btn.primary { background:var(--mint); border-color:var(--mint); color:#fff; box-shadow:0 2px 6px rgba(91,181,166,0.2); }
+        .med-btn.done { background:var(--mint-soft); border-color:var(--mint-glow); color:var(--mint); }
+        .med-btn.skipped { background:var(--honey-soft); border-color:#ecddb8; color:var(--honey); }
+        .calendar { margin-bottom:16px; }
+        .cal-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; padding:0 4px; }
+        .cal-title { font-size:15px; color:var(--text); font-weight:500; }
+        .cal-nav { background:var(--card); border:1px solid var(--border); border-radius:50%; width:32px; height:32px; color:var(--text-muted); font-size:16px; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 1px 3px rgba(0,0,0,0.04); }
+        .cal-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:2px; }
+        .cal-weekday { text-align:center; font-size:10px; color:var(--text-faint); padding:6px 0; }
+        .cal-day { text-align:center; padding:5px 2px; font-size:12px; border-radius:8px; min-height:38px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; }
+        .cal-day.today { font-weight:500; background:var(--mint-soft); color:var(--mint); box-shadow:inset 0 0 0 1.5px var(--mint); }
+        .cal-day.other-month { color:var(--text-faint); }
+        .cal-day.visit { background:var(--periwinkle-soft); box-shadow:inset 0 0 0 1.5px var(--periwinkle); }
+        .cal-day.lastday { background:var(--coral-soft); box-shadow:inset 0 0 0 1.5px var(--coral); }
+        .cal-dots { display:flex; gap:2px; }
+        .cal-dot { width:5px; height:5px; border-radius:50%; }
+        .legend { display:flex; flex-wrap:wrap; gap:10px; font-size:11px; color:var(--text-muted); margin-bottom:16px; padding:4px 8px; }
+        .legend-item { display:flex; align-items:center; gap:4px; }
+        .legend-dot { width:8px; height:8px; border-radius:50%; }
+        .form-label { font-size:12px; color:var(--text-muted); margin-bottom:6px; display:block; }
+        .form-input { width:100%; padding:10px 14px; background:var(--card); border:1px solid var(--border); border-radius:12px; color:var(--text); font-size:14px; font-family:inherit; -webkit-appearance:none; }
+        .form-input:focus { outline:none; border-color:var(--mint); box-shadow:0 0 0 3px var(--mint-soft); }
+        .form-input::placeholder { color:var(--text-faint); }
+        .form-input[type="date"]::-webkit-calendar-picker-indicator { filter:invert(0.3); }
+        .form-group { margin-bottom:14px; }
+        .form-row { display:flex; gap:8px; }
+        .btn { padding:9px 16px; background:var(--card); border:1px solid var(--border); border-radius:12px; color:var(--text-secondary); cursor:pointer; font-size:12px; font-family:inherit; transition:all 0.15s; }
+        .btn-mint { background:var(--mint-soft); border-color:var(--mint-glow); color:var(--mint); }
+        .btn-icon { background:none; border:none; color:var(--text-faint); cursor:pointer; font-size:14px; padding:4px; }
+        .btn-icon:hover { color:var(--coral); }
+        .section-divider { border-top:1px solid var(--border); padding-top:18px; margin-top:20px; }
+        .section-title { font-size:12px; color:var(--text-muted); margin-bottom:12px; letter-spacing:0.04em; }
+        .med-list-item { display:flex; justify-content:space-between; align-items:center; padding:10px 14px; background:var(--card); border:1px solid var(--border-light); border-radius:12px; margin-bottom:6px; font-size:13px; box-shadow:0 1px 3px rgba(0,0,0,0.02); }
+        .toast { position:fixed; top:150px; left:50%; transform:translateX(-50%); max-width:88%; background:var(--card); border:1px solid var(--mint); border-radius:14px; padding:12px 24px; color:var(--text-secondary); font-size:13px; box-shadow:0 4px 20px rgba(91,181,166,0.15); opacity:0; transition:opacity 0.3s; pointer-events:none; z-index:100; text-align:center; }
+        .toast.show { opacity:1; }
+        .empty { text-align:center; padding:32px; color:var(--text-faint); font-size:13px; }
+        @media(max-width:480px) { .container{padding:0 14px 100px;} .form-row{flex-direction:column;} }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header"><h1>くすりばこ</h1></div>
+
+        <div class="greeting" id="greeting"></div>
+    <div class="tabs">
+        <button class="tab active" onclick="switchTab('home')">ホーム</button>
+        <button class="tab" onclick="switchTab('calendar')">カレンダー</button>
+        <button class="tab" onclick="switchTab('settings')">設定</button>
+    </div>
+    <div id="home-panel" class="panel active">
+
+        <div id="visit-banner"></div>
+        <div id="med-cards"></div>
+    </div>
+    <div id="calendar-panel" class="panel">
+        <div class="calendar">
+            <div class="cal-header">
+                <button class="cal-nav" onclick="changeMonth(-1)">‹</button>
+                <div class="cal-title" id="cal-title"></div>
+                <button class="cal-nav" onclick="changeMonth(1)">›</button>
+            </div>
+            <div class="cal-grid" id="cal-grid"></div>
+        </div>
+        <div class="legend" id="cal-legend"></div>
+    </div>
+    <div id="settings-panel" class="panel">
+        <div class="section-title">📅 通院予定</div>
+        <div class="form-group">
+            <label class="form-label">次回通院日</label>
+            <input type="date" id="next-visit" class="form-input" onchange="saveSettings()">
+        </div>
+        <div class="section-divider">
+            <div class="section-title">📋 補充の履歴</div>
+            <div id="refill-history"></div>
+        </div>
+        <div class="section-divider">
+            <div class="section-title">💊 おくすりの管理</div>
+            <div id="med-manager"></div>
+            <div style="margin-top:16px;border:1px solid var(--border);border-radius:14px;padding:16px;background:var(--card);">
+                <div class="form-group"><label class="form-label">おくすりの名前</label><input type="text" id="new-med-name" class="form-input" placeholder="例：コンサータ 27mg"></div>
+                <div style="display:flex;gap:8px;margin-bottom:12px;">
+                    <div class="form-group" style="flex:1;"><label class="form-label">1日の用量</label><input type="text" id="new-med-dose" class="form-input" placeholder="1錠"></div>
+                    <div class="form-group" style="flex:1;"><label class="form-label">手持ち数</label><input type="number" id="new-med-stock" class="form-input" placeholder="0" inputmode="numeric"></div>
+                </div>
+                <div style="display:flex;gap:8px;margin-bottom:12px;">
+                    <div class="form-group" style="flex:1;"><label class="form-label">服用パターン</label><select id="new-med-pattern" class="form-input"><option value="daily">毎日</option><option value="weekday">平日のみ</option><option value="asneeded">頓服</option></select></div>
+                    <div class="form-group" style="flex:1;"><label class="form-label">色</label><select id="new-med-color" class="form-input"><option value="mint">ミント</option><option value="periwinkle">パープル</option><option value="sky">ブルー</option><option value="honey">オレンジ</option></select></div>
+                </div>
+                <button class="btn btn-mint" style="width:100%;padding:12px;" onclick="addMed()">追加する</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="toast" class="toast"></div>
+<script>
+const DEFAULT_MEDS=[
+    {id:'con27',name:'コンサータ 27mg',dose:'1錠',stock:0,pattern:'weekday',color:'mint'},
+    {id:'con36',name:'コンサータ 36mg',dose:'1錠',stock:0,pattern:'weekday',color:'mint'},
+    {id:'lex',name:'レクサプロ',dose:'1錠',stock:0,pattern:'daily',color:'periwinkle'},
+    {id:'sleep',name:'眠剤',dose:'1錠',stock:0,pattern:'daily',color:'sky'},
+];
+const GREETINGS=["今日の服薬、確認せよ。","在庫の状況、把握しておけ。","忘れるな。一つずつ、着実に。","身体を整えるのも、戦の備えである。"];
+const TAKE_COMMENTS=["よし、記録した。","服用済み。よくやった。","今日も忘れずに済んだな。","一つ刻んだ。"];
+const REFILL_COMMENTS=["補充した。次の通院まで持つか、確認せよ。","在庫を更新した。","よし、これでしばらく持つな。"];
+const PATTERN_LABELS={daily:'毎日',weekday:'平日のみ',asneeded:'頓服'};
+const COLOR_MAP={mint:'var(--mint)',periwinkle:'var(--periwinkle)',sky:'var(--sky)',honey:'var(--honey)'};
+let meds=[],logs={},refills=[],settings={nextVisit:''};
+let calMonth=null,calYear=null,toastTimeout=null;
+function getJSTDate(){const n=new Date(),j=new Date(n.toLocaleString('en-US',{timeZone:'Asia/Tokyo'}));return`${j.getFullYear()}-${String(j.getMonth()+1).padStart(2,'0')}-${String(j.getDate()).padStart(2,'0')}`;}
+function getJSTNow(){return new Date(new Date().toLocaleString('en-US',{timeZone:'Asia/Tokyo'}));}
+function pick(a){return a[Math.floor(Math.random()*a.length)];}
+function formatDateShort(d){const dt=new Date(d+'T00:00:00+09:00');return`${dt.getMonth()+1}/${dt.getDate()}（${'日月火水木金土'[dt.getDay()]}）`;}
+function isWeekday(d){const w=new Date(d+'T00:00:00+09:00').getDay();return w>=1&&w<=5;}
+function daysBetween(a,b){return Math.ceil((new Date(b+'T00:00:00+09:00')-new Date(a+'T00:00:00+09:00'))/864e5);}
+function addDays(d,n){const dt=new Date(d+'T00:00:00+09:00');dt.setDate(dt.getDate()+n);return`${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}-${String(dt.getDate()).padStart(2,'0')}`;}
+function loadData(){const m=localStorage.getItem('medMeds');meds=m?JSON.parse(m):DEFAULT_MEDS.map(d=>({...d}));const l=localStorage.getItem('medLogs');logs=l?JSON.parse(l):{};const r=localStorage.getItem('medRefills');refills=r?JSON.parse(r):[];const s=localStorage.getItem('medSettings');if(s)settings=JSON.parse(s);document.getElementById('next-visit').value=settings.nextVisit||'';const now=getJSTNow();calMonth=now.getMonth();calYear=now.getFullYear();}
+function saveMeds(){localStorage.setItem('medMeds',JSON.stringify(meds));}
+function saveLogs(){localStorage.setItem('medLogs',JSON.stringify(logs));}
+function saveRefills(){localStorage.setItem('medRefills',JSON.stringify(refills));}
+function saveSettings(){settings.nextVisit=document.getElementById('next-visit').value;localStorage.setItem('medSettings',JSON.stringify(settings));renderHome();renderCalendar();}
+function showToast(t){const e=document.getElementById('toast');if(toastTimeout)clearTimeout(toastTimeout);e.textContent=t;e.classList.add('show');toastTimeout=setTimeout(()=>{e.classList.remove('show');},3000);}
+function calcRemainingDays(med){if(med.stock<=0)return 0;let remaining=med.stock,days=0;const today=getJSTDate();for(let i=0;i<365;i++){const d=addDays(today,i);if(med.pattern==='weekday'&&!isWeekday(d))continue;if(med.pattern==='asneeded'){days=remaining*2;break;}remaining--;if(remaining<=0)break;days=i+1;}return days;}
+function getStockStatus(med){const days=calcRemainingDays(med);if(settings.nextVisit){const dv=daysBetween(getJSTDate(),settings.nextVisit);if(days<dv)return'critical';if(days<dv+3)return'low';}if(days<=3)return'critical';if(days<=7)return'low';return'ok';}
+function getStatusLabel(s){return s==='ok'?'余裕あり':s==='low'?'残り僅か':'⚠ 不足';}
+function takeMed(id){const today=getJSTDate();if(!logs[today])logs[today]={};logs[today][id]='taken';const med=meds.find(m=>m.id===id);if(med&&med.stock>0)med.stock--;saveMeds();saveLogs();renderHome();renderCalendar();showToast(pick(TAKE_COMMENTS));}
+function skipMed(id){const today=getJSTDate();if(!logs[today])logs[today]={};logs[today][id]='skipped';saveLogs();renderHome();renderCalendar();showToast('スキップを記録した。在庫は減らしていない。');}
+function undoMed(id){const today=getJSTDate();if(logs[today]&&logs[today][id]){const was=logs[today][id]==='taken';delete logs[today][id];if(!Object.keys(logs[today]).length)delete logs[today];if(was){const med=meds.find(m=>m.id===id);if(med)med.stock++;saveMeds();}saveLogs();renderHome();renderCalendar();showToast('取り消した。');}}
+function refillMed(id){
+    const med=meds.find(m=>m.id===id);if(!med)return;
+    const card=document.querySelector(`[data-med-id="${id}"] .med-actions`);
+    if(!card)return;
+    card.innerHTML=`<div style="display:flex;gap:8px;width:100%;align-items:center;"><input type="number" id="refill-input-${id}" class="form-input" placeholder="錠数" inputmode="numeric" style="flex:1;padding:8px 12px;font-size:14px;"><button class="med-btn primary" onclick="confirmRefill('${id}')" style="flex:none;">補充</button><button class="med-btn" onclick="renderHome()" style="flex:none;">戻る</button></div>`;
+    document.getElementById('refill-input-'+id).focus();
+}
+function confirmRefill(id){
+    const input=document.getElementById('refill-input-'+id);
+    if(!input)return;
+    const num=parseInt(input.value);
+    if(isNaN(num)||num<=0){showToast('正しい数を入力せよ。');return;}
+    const med=meds.find(m=>m.id===id);if(!med)return;
+    med.stock+=num;
+    saveMeds();
+    refills.push({date:getJSTDate(),medId:id,medName:med.name,amount:num});
+    saveRefills();
+    renderHome();renderCalendar();
+    showToast(pick(REFILL_COMMENTS));
+}
+function renderHome(){
+    document.getElementById('greeting').textContent=pick(GREETINGS);
+    const today=getJSTDate(),todayLogs=logs[today]||{};
+    const banner=document.getElementById('visit-banner');
+    if(settings.nextVisit){const d=daysBetween(today,settings.nextVisit);let text='';if(d>0)text=`📅 次の通院まで ${d}日（${formatDateShort(settings.nextVisit)}）`;else if(d===0)text='📅 今日は通院の日である';else text='📅 通院予定日を過ぎている。確認せよ';banner.innerHTML=`<div class="visit-banner">${text}</div>`;}else{banner.innerHTML='';}
+    const container=document.getElementById('med-cards');
+    if(!meds.length){container.innerHTML='<div class="empty">薬が登録されていない。<br>設定から追加せよ。</div>';return;}
+    let html='';
+    meds.forEach(med=>{
+        const status=getStockStatus(med),remainDays=calcRemainingDays(med),ts=todayLogs[med.id],doseLabel=PATTERN_LABELS[med.pattern];
+        const lastDate=remainDays>0?formatDateShort(addDays(today,remainDays)):'—';
+        let pct=0;if(settings.nextVisit){const dv=daysBetween(today,settings.nextVisit);pct=dv>0?Math.min((remainDays/dv)*100,100):100;}else{pct=Math.min((remainDays/14)*100,100);}
+        const barLabel=settings.nextVisit?`${remainDays}日分 / 通院まで${daysBetween(today,settings.nextVisit)}日`:`${remainDays}日分`;
+        html+=`<div class="med-card color-${med.color}" data-med-id="${med.id}"><div class="med-card-header"><span class="med-name">${med.name}</span><span class="med-badge ${status}">${getStatusLabel(status)}</span></div><div class="med-info"><div><span class="med-info-label">手持ち </span><span class="med-info-value">${med.stock}錠</span></div><div><span class="med-info-label">残り </span><span class="med-info-value">約${remainDays}日分</span></div><div><span class="med-info-label">用量 </span><span class="med-info-value">${med.dose}（${doseLabel}）</span></div><div><span class="med-info-label">最終日 </span><span class="med-info-value">${lastDate}</span></div></div><div class="med-bar-wrap"><div class="med-bar-label"><span>在庫</span><span>${barLabel}</span></div><div class="med-bar-track"><div class="med-bar-fill ${status}" style="width:${pct}%"></div></div></div><div class="med-actions">${ts==='taken'?`<button class="med-btn done" onclick="undoMed('${med.id}')">✓ 服用済み（取消）</button>`:ts==='skipped'?`<button class="med-btn skipped" onclick="undoMed('${med.id}')">— スキップ（取消）</button>`:`<button class="med-btn primary" onclick="takeMed('${med.id}')">のんだ</button><button class="med-btn" onclick="skipMed('${med.id}')">スキップ</button>`}<button class="med-btn" onclick="refillMed('${med.id}')" style="flex:none;padding:10px 14px;">＋補充</button></div></div>`;
+    });
+    container.innerHTML=html;
+}
+function renderCalendar(){
+    document.getElementById('cal-title').textContent=`${calYear}年${calMonth+1}月`;
+    const grid=document.getElementById('cal-grid'),today=getJSTDate(),weekdays=['日','月','火','水','木','金','土'];
+    // Compute last-date for each med
+    const lastDates={};
+    meds.forEach(med=>{const rd=calcRemainingDays(med);if(rd>0)lastDates[addDays(today,rd)]=lastDates[addDays(today,rd)]||[];if(rd>0)lastDates[addDays(today,rd)].push(med);});
+    let html=weekdays.map(w=>`<div class="cal-weekday">${w}</div>`).join('');
+    const firstDay=new Date(calYear,calMonth,1).getDay(),daysInMonth=new Date(calYear,calMonth+1,0).getDate(),prevDays=new Date(calYear,calMonth,0).getDate();
+    for(let i=firstDay-1;i>=0;i--)html+=`<div class="cal-day other-month">${prevDays-i}</div>`;
+    for(let d=1;d<=daysInMonth;d++){
+        const ds=`${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`,isToday=ds===today,isVisit=ds===settings.nextVisit,isLast=!!lastDates[ds],dayLogs=logs[ds]||{};
+        let cls='cal-day';if(isToday)cls+=' today';if(isVisit)cls+=' visit';if(isLast&&!isToday&&!isVisit)cls+=' lastday';
+        let dots='';meds.forEach(med=>{const log=dayLogs[med.id],c=COLOR_MAP[med.color]||'var(--mint)';if(log==='taken')dots+=`<div class="cal-dot" style="background:${c}"></div>`;else if(log==='skipped')dots+=`<div class="cal-dot" style="background:var(--honey)"></div>`;else if(ds<today)dots+=`<div class="cal-dot" style="background:var(--text-faint)"></div>`;});
+        html+=`<div class="${cls}">${d}${dots?`<div class="cal-dots">${dots}</div>`:''}</div>`;
+    }
+    const total=firstDay+daysInMonth;for(let i=1;i<=(7-total%7)%7;i++)html+=`<div class="cal-day other-month">${i}</div>`;
+    grid.innerHTML=html;
+    const legend=document.getElementById('cal-legend');let lh='';
+    meds.forEach(med=>{lh+=`<div class="legend-item"><div class="legend-dot" style="background:${COLOR_MAP[med.color]}"></div>${med.name}</div>`;});
+    lh+=`<div class="legend-item"><div class="legend-dot" style="background:var(--honey)"></div>スキップ</div>`;
+    if(settings.nextVisit)lh+=`<div class="legend-item"><div class="legend-dot" style="background:var(--periwinkle-soft);border:1.5px solid var(--periwinkle)"></div>通院日</div>`;
+    lh+=`<div class="legend-item"><div class="legend-dot" style="background:var(--coral-soft);border:1.5px solid var(--coral)"></div>在庫最終日</div>`;
+    legend.innerHTML=lh;
+}
+function changeMonth(delta){calMonth+=delta;if(calMonth<0){calMonth=11;calYear--;}if(calMonth>11){calMonth=0;calYear++;}renderCalendar();}
+function renderMedManager(){
+    const c=document.getElementById('med-manager');
+    if(!meds.length){c.innerHTML='<div class="empty">薬の登録なし</div>';return;}
+    c.innerHTML=meds.map((med,i)=>`<div class="med-list-item"><div><div style="font-weight:500;">${med.name}</div><div style="font-size:11px;color:var(--text-muted);">${med.dose} / ${PATTERN_LABELS[med.pattern]}</div></div><div style="display:flex;align-items:center;gap:8px;"><input type="number" value="${med.stock}" style="width:50px;padding:5px 6px;border:1px solid var(--border);border-radius:8px;text-align:center;font-size:13px;font-family:inherit;color:var(--text);background:var(--card);" onchange="updateStock(${i},this.value)" inputmode="numeric"><span style="font-size:11px;color:var(--text-muted);">錠</span><button class="btn-icon" onclick="removeMed(${i})">✕</button></div></div>`).join('');
+}
+function renderRefillHistory(){
+    const c=document.getElementById('refill-history');
+    if(!refills.length){c.innerHTML='<div class="empty" style="padding:16px;">補充の記録はまだない。</div>';return;}
+    const sorted=[...refills].reverse();
+    c.innerHTML=sorted.slice(0,20).map((r,i)=>{
+        const idx=refills.length-1-i;
+        return`<div class="med-list-item"><div><div style="font-weight:400;">${formatDateShort(r.date)}</div><div style="font-size:12px;color:var(--text-secondary);">${r.medName} ＋${r.amount}錠</div></div><button class="btn-icon" onclick="deleteRefill(${idx})">✕</button></div>`;
+    }).join('');
+}
+function deleteRefill(idx){
+    if(!confirm('この補充記録を削除する。在庫数は手動で修正せよ。'))return;
+    refills.splice(idx,1);saveRefills();renderRefillHistory();
+    showToast('補充記録を削除した。');
+}
+function updateStock(i,v){meds[i].stock=parseInt(v)||0;saveMeds();renderHome();}
+function addMed(){const name=document.getElementById('new-med-name').value.trim(),dose=document.getElementById('new-med-dose').value.trim(),stock=parseInt(document.getElementById('new-med-stock').value)||0,pattern=document.getElementById('new-med-pattern').value,color=document.getElementById('new-med-color').value;if(!name){showToast('薬の名前を入力せよ。');return;}meds.push({id:'med_'+Date.now(),name,dose:dose||'1錠',stock,pattern,color});saveMeds();document.getElementById('new-med-name').value='';document.getElementById('new-med-dose').value='';document.getElementById('new-med-stock').value='';renderMedManager();renderHome();renderCalendar();showToast(`「${name}」を追加した。`);}
+function removeMed(i){const name=meds[i].name;if(!confirm(`「${name}」を削除する。よいな？`))return;meds.splice(i,1);saveMeds();renderMedManager();renderHome();renderCalendar();showToast(`「${name}」を削除した。`);}
+function switchTab(name){document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));const labels={home:'ホーム',calendar:'カレンダー',settings:'設定'};document.querySelectorAll('.tab').forEach(t=>{if(t.textContent===labels[name])t.classList.add('active');});document.getElementById(`${name}-panel`).classList.add('active');if(name==='calendar')renderCalendar();if(name==='settings'){renderMedManager();renderRefillHistory();}}
+loadData();renderHome();renderCalendar();
+</script>
+</body>
+</html>

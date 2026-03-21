@@ -54,7 +54,7 @@
         .med-card::before { content:''; position:absolute; top:0; left:0; width:4px; height:100%; border-radius:4px 0 0 4px; }
         .med-card.color-mint::before { background:var(--mint); }
         .med-card.color-periwinkle::before { background:var(--periwinkle); }
-        .med-card.color-honey::before { background:var(--honey); }
+        .med-card.color-coral::before { background:var(--honey); }
         .med-card.color-sky::before { background:var(--sky); }
         .med-card-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; padding-left:8px; }
         .med-name { font-size:15px; font-weight:500; color:var(--text); }
@@ -85,15 +85,16 @@
         .cal-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:2px; }
         .cal-weekday { text-align:center; font-size:10px; color:var(--text-faint); padding:6px 0; }
         .cal-day { text-align:center; padding:5px 2px; font-size:12px; border-radius:8px; min-height:38px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; }
-        .cal-day.today { font-weight:500; background:var(--mint-soft); color:var(--mint); box-shadow:inset 0 0 0 1.5px var(--mint); }
+        .cal-day.today { font-weight:500; background:var(--mint-soft); color:var(--mint); box-shadow:inset 0 0 0 1.6px var(--mint); }
         .cal-day.other-month { color:var(--text-faint); }
-        .cal-day.visit { background:var(--periwinkle-soft); box-shadow:inset 0 0 0 1.5px var(--periwinkle); }
-        .cal-day.lastday { background:var(--coral-soft); box-shadow:inset 0 0 0 1.5px var(--coral); }
+        .cal-day.visit { background:var(--periwinkle-soft); box-shadow:inset 0 0 0 1.6px var(--periwinkle); }
+        .cal-day.lastday { background:var(--coral-soft); box-shadow:inset 0 0 0 1.6px var(--coral); }
         .cal-dots { display:flex; gap:2px; }
         .cal-dot { width:5px; height:5px; border-radius:50%; }
         .legend { display:flex; flex-wrap:wrap; gap:10px; font-size:11px; color:var(--text-muted); margin-bottom:16px; padding:4px 8px; }
         .legend-item { display:flex; align-items:center; gap:4px; }
         .legend-dot { width:8px; height:8px; border-radius:50%; }
+        .legend-day { width:8px; height:8px; border-radius:35%; }
         .form-label { font-size:12px; color:var(--text-muted); margin-bottom:6px; display:block; }
         .form-input { width:100%; padding:10px 14px; background:var(--card); border:1px solid var(--border); border-radius:12px; color:var(--text); font-size:14px; font-family:inherit; -webkit-appearance:none; }
         .form-input:focus { outline:none; border-color:var(--mint); box-shadow:0 0 0 3px var(--mint-soft); }
@@ -120,7 +121,7 @@
 
         <div class="greeting" id="greeting"></div>
     <div class="tabs">
-        <button class="tab active" onclick="switchTab('home')">ホーム</button>
+        <button class="tab active" onclick="switchTab('home')">くすり</button>
         <button class="tab" onclick="switchTab('calendar')">カレンダー</button>
         <button class="tab" onclick="switchTab('settings')">設定</button>
     </div>
@@ -147,11 +148,11 @@
             <input type="date" id="next-visit" class="form-input" onchange="saveSettings()">
         </div>
         <div class="section-divider">
-            <div class="section-title">📋 補充の履歴</div>
+            <div class="section-title">📋 補充履歴</div>
             <div id="refill-history"></div>
         </div>
         <div class="section-divider">
-            <div class="section-title">💊 おくすりの管理</div>
+            <div class="section-title">💊 くすりの管理</div>
             <div id="med-manager"></div>
             <div style="margin-top:16px;border:1px solid var(--border);border-radius:14px;padding:16px;background:var(--card);">
                 <div class="form-group"><label class="form-label">おくすりの名前</label><input type="text" id="new-med-name" class="form-input" placeholder="例：コンサータ 27mg"></div>
@@ -161,7 +162,7 @@
                 </div>
                 <div style="display:flex;gap:8px;margin-bottom:12px;">
                     <div class="form-group" style="flex:1;"><label class="form-label">服用パターン</label><select id="new-med-pattern" class="form-input"><option value="daily">毎日</option><option value="weekday">平日のみ</option><option value="asneeded">頓服</option></select></div>
-                    <div class="form-group" style="flex:1;"><label class="form-label">色</label><select id="new-med-color" class="form-input"><option value="mint">ミント</option><option value="periwinkle">パープル</option><option value="sky">ブルー</option><option value="honey">オレンジ</option></select></div>
+                    <div class="form-group" style="flex:1;"><label class="form-label">色</label><select id="new-med-color" class="form-input"><option value="mint">翠</option><option value="periwinkle">紫</option><option value="sky">青</option><option value="honey">黄</option></select></div>
                 </div>
                 <button class="btn btn-mint" style="width:100%;padding:12px;" onclick="addMed()">追加する</button>
             </div>
@@ -174,11 +175,11 @@ const DEFAULT_MEDS=[
     {id:'con27',name:'コンサータ 27mg',dose:'1錠',stock:0,pattern:'weekday',color:'mint'},
     {id:'con36',name:'コンサータ 36mg',dose:'1錠',stock:0,pattern:'weekday',color:'mint'},
     {id:'lex',name:'レクサプロ',dose:'1錠',stock:0,pattern:'daily',color:'periwinkle'},
-    {id:'sleep',name:'眠剤',dose:'1錠',stock:0,pattern:'daily',color:'sky'},
+    {id:'sleep',name:'デエビゴ',dose:'1錠',stock:0,pattern:'daily',color:'sky'},
 ];
-const GREETINGS=["今日の服薬、確認せよ。","在庫の状況、把握しておけ。","忘れるな。一つずつ、着実に。","身体を整えるのも、戦の備えである。"];
+const GREETINGS=["今日の服薬を確認せよ。","在庫の状況を把握しておけ。","服薬は済んだか。記録を忘れるな。","身体を整えるのも、戦の備えである。"];
 const TAKE_COMMENTS=["よし、記録した。","服用済み。よくやった。","今日も忘れずに済んだな。","一つ刻んだ。"];
-const REFILL_COMMENTS=["補充した。次の通院まで持つか、確認せよ。","在庫を更新した。","よし、これでしばらく持つな。"];
+const REFILL_COMMENTS=["補充した。いつまで持つか、確認せよ。","在庫を更新した。","これでしばらく持つな。"];
 const PATTERN_LABELS={daily:'毎日',weekday:'平日のみ',asneeded:'頓服'};
 const COLOR_MAP={mint:'var(--mint)',periwinkle:'var(--periwinkle)',sky:'var(--sky)',honey:'var(--honey)'};
 let meds=[],logs={},refills=[],settings={nextVisit:''};
@@ -226,7 +227,7 @@ function renderHome(){
     document.getElementById('greeting').textContent=pick(GREETINGS);
     const today=getJSTDate(),todayLogs=logs[today]||{};
     const banner=document.getElementById('visit-banner');
-    if(settings.nextVisit){const d=daysBetween(today,settings.nextVisit);let text='';if(d>0)text=`📅 次の通院まで ${d}日（${formatDateShort(settings.nextVisit)}）`;else if(d===0)text='📅 今日は通院の日である';else text='📅 通院予定日を過ぎている。確認せよ';banner.innerHTML=`<div class="visit-banner">${text}</div>`;}else{banner.innerHTML='';}
+    if(settings.nextVisit){const d=daysBetween(today,settings.nextVisit);let text='';if(d>0)text=`📅 次回通院予定： ${formatDateShort(settings.nextVisit)} (あと ${d}日)`;else if(d===0)text=`📅 ${formatDateShort(settings.nextVisit)} ： 今日は通院の日である。`;else text=`📅 …通院予定日を過ぎている。確認せよ。（${d}日）`;banner.innerHTML=`<div class="visit-banner">${text}</div>`;}else{banner.innerHTML='';}
     const container=document.getElementById('med-cards');
     if(!meds.length){container.innerHTML='<div class="empty">薬が登録されていない。<br>設定から追加せよ。</div>';return;}
     let html='';
@@ -251,16 +252,16 @@ function renderCalendar(){
     for(let d=1;d<=daysInMonth;d++){
         const ds=`${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`,isToday=ds===today,isVisit=ds===settings.nextVisit,isLast=!!lastDates[ds],dayLogs=logs[ds]||{};
         let cls='cal-day';if(isToday)cls+=' today';if(isVisit)cls+=' visit';if(isLast&&!isToday&&!isVisit)cls+=' lastday';
-        let dots='';meds.forEach(med=>{const log=dayLogs[med.id],c=COLOR_MAP[med.color]||'var(--mint)';if(log==='taken')dots+=`<div class="cal-dot" style="background:${c}"></div>`;else if(log==='skipped')dots+=`<div class="cal-dot" style="background:var(--honey)"></div>`;else if(ds<today)dots+=`<div class="cal-dot" style="background:var(--text-faint)"></div>`;});
+        let dots='';meds.forEach(med=>{const log=dayLogs[med.id],c=COLOR_MAP[med.color]||'var(--mint)';if(log==='taken')dots+=`<div class="cal-dot" style="background:${c}"></div>`;else if(log==='skipped')dots+=`<div class="cal-dot" style="background:var(--text-muted)"></div>`;else if(ds<today)dots+=`<div class="cal-dot" style="background:var(--text-faint)"></div>`;});
         html+=`<div class="${cls}">${d}${dots?`<div class="cal-dots">${dots}</div>`:''}</div>`;
     }
     const total=firstDay+daysInMonth;for(let i=1;i<=(7-total%7)%7;i++)html+=`<div class="cal-day other-month">${i}</div>`;
     grid.innerHTML=html;
     const legend=document.getElementById('cal-legend');let lh='';
     meds.forEach(med=>{lh+=`<div class="legend-item"><div class="legend-dot" style="background:${COLOR_MAP[med.color]}"></div>${med.name}</div>`;});
-    lh+=`<div class="legend-item"><div class="legend-dot" style="background:var(--honey)"></div>スキップ</div>`;
-    if(settings.nextVisit)lh+=`<div class="legend-item"><div class="legend-dot" style="background:var(--periwinkle-soft);border:1.5px solid var(--periwinkle)"></div>通院日</div>`;
-    lh+=`<div class="legend-item"><div class="legend-dot" style="background:var(--coral-soft);border:1.5px solid var(--coral)"></div>在庫最終日</div>`;
+    lh+=`<div class="legend-item"><div class="legend-dot" style="background:var(--text-muted)"></div>スキップ</div>`;
+    if(settings.nextVisit)lh+=`<div class="legend-item"><div class="legend-day" style="background:var(--periwinkle-soft);border:1.6px solid var(--periwinkle)"></div>通院日</div>`;
+    lh+=`<div class="legend-item"><div class="legend-day" style="background:var(--coral-soft);border:1.6px solid var(--coral)"></div>在庫最終日</div>`;
     legend.innerHTML=lh;
 }
 function changeMonth(delta){calMonth+=delta;if(calMonth<0){calMonth=11;calYear--;}if(calMonth>11){calMonth=0;calYear++;}renderCalendar();}

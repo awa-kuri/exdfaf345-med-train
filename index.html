@@ -201,13 +201,15 @@ const DEFAULT_MEDS=[
     {id:'sleep',name:'デエビゴ',dose:'1錠',stock:0,pattern:'daily',color:'lavender'},
 ];
 const GREETINGS=["今日の服薬を確認せよ。","在庫の状況を把握しておけ。","服薬は済んだか。記録を忘れるな。","身体を整えるのも、戦の備えである。"];
-const TAKE_COMMENTS=["よし、記録した。","服用済み。よくやった。","今日も忘れずに済んだな。","一つ刻んだ。"];
+const TAKE_COMMENTS=["服用済み。","記録した。よくやった。","次も忘れずに。","一つ刻んだ。"];
 const REFILL_COMMENTS=["補充した。いつまで持つか、確認せよ。","在庫を更新した。","これでしばらく持つな。"];
 const PATTERN_LABELS={daily:'毎日',weekday:'平日のみ',asneeded:'頓服'};
 const COLOR_MAP={mint:'var(--mint)',periwinkle:'var(--periwinkle)',sky:'var(--sky)',honey:'var(--honey)',rose:'var(--rose)',lavender:'var(--lavender)',terra:'var(--terra)',moss:'var(--moss)'};
 let meds=[],logs={},refills=[],settings={nextVisit:''};
 let calMonth=null,calYear=null,toastTimeout=null;
-function getJSTDate(){const n=new Date(),j=new Date(n.toLocaleString('en-US',{timeZone:'Asia/Tokyo'}));return`${j.getFullYear()}-${String(j.getMonth()+1).padStart(2,'0')}-${String(j.getDate()).padStart(2,'0')}`;}
+
+function getJSTDate(){const n=new Date(),j=new Date(n.toLocaleString('en-US',{timeZone:'Asia/Tokyo'}));j.setHours(j.getHours()-5);return`${j.getFullYear()}-${String(j.getMonth()+1).padStart(2,'0')}-${String(j.getDate()).padStart(2,'0')}`;}
+
 function getJSTNow(){return new Date(new Date().toLocaleString('en-US',{timeZone:'Asia/Tokyo'}));}
 function pick(a){return a[Math.floor(Math.random()*a.length)];}
 function formatDateShort(d){const dt=new Date(d+'T00:00:00+09:00');return`${dt.getMonth()+1}/${dt.getDate()}（${'日月火水木金土'[dt.getDay()]}）`;}

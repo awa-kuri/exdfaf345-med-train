@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>薬匣</title>
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -34,16 +34,16 @@
             --honey-soft: #fdf4e2;
             --sky: #6ea8d0;
             --sky-soft: #e6f1f8;
---rose: #d4809a;
---rose-soft: #f8eaef;
---lavender: #a08cc0;
---lavender-soft: #f0ecf6;
---terra: #b87860;
---terra-soft: #f5ebe6;
---moss: #6a9a6e;
---moss-soft: #e8f0e8;
+            --rose: #d4809a;
+            --rose-soft: #f8eaef;
+            --lavender: #a08cc0;
+            --lavender-soft: #f0ecf6;
+            --terra: #b87860;
+            --terra-soft: #f5ebe6;
+            --moss: #6a9a6e;
+            --moss-soft: #e8f0e8;
         }
-        * { margin:0; padding:0; box-sizing:border-box; }
+        * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
         body {
             font-family: 'Zen Maru Gothic','Hiragino Maru Gothic Pro',sans-serif;
             background:var(--bg); color:var(--text); line-height:1.7;
@@ -59,69 +59,105 @@
         .panel.active { display:block; }
         .visit-banner { background:linear-gradient(135deg,var(--sky-soft),var(--periwinkle-soft)); border:1px solid var(--border-light); border-radius:14px; padding:12px 16px; text-align:center; margin-bottom:16px; font-size:13px; color:var(--periwinkle); font-weight:500; }
         .greeting { text-align:center; padding:8px 10px 8px; font-size:14px; color:var(--text-muted); line-height:1.9; }
-        .med-card { background:var(--card); border:1px solid var(--border-light); border-radius:16px; padding:18px; margin-bottom:14px; box-shadow:var(--card-shadow); position:relative; overflow:hidden; }
-        .med-card::before { content:''; position:absolute; top:0; left:0; width:4px; height:100%; border-radius:4px 0 0 4px; }
-        .med-card.color-mint::before { background:var(--mint); }
-        .med-card.color-periwinkle::before { background:var(--periwinkle); }
-        .med-card.color-coral::before { background:var(--honey); }
-        .med-card.color-sky::before { background:var(--sky); }
-.med-card.color-rose::before { background:var(--rose); }
-.med-card.color-lavender::before { background:var(--lavender); }
-.med-card.color-terra::before { background:var(--terra); }
-.med-card.color-moss::before { background:var(--moss); }
-        .med-card-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; padding-left:8px; }
+
+        /* 薬ごとの色の帯（カードと日ごとの小窓で共通） */
+        .med-card, .sheet-row { position:relative; overflow:hidden; }
+        .med-card::before, .sheet-row::before { content:''; position:absolute; top:0; left:0; width:4px; height:100%; border-radius:4px 0 0 4px; background:var(--mint); }
+        .color-mint::before { background:var(--mint) !important; }
+        .color-periwinkle::before { background:var(--periwinkle) !important; }
+        .color-sky::before { background:var(--sky) !important; }
+        .color-honey::before, .color-coral::before { background:var(--honey) !important; }
+        .color-rose::before { background:var(--rose) !important; }
+        .color-lavender::before { background:var(--lavender) !important; }
+        .color-terra::before { background:var(--terra) !important; }
+        .color-moss::before { background:var(--moss) !important; }
+
+        .med-card { background:var(--card); border:1px solid var(--border-light); border-radius:16px; padding:18px; margin-bottom:14px; box-shadow:var(--card-shadow); }
+        .med-card-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; padding-left:8px; gap:8px; }
         .med-name { font-size:15px; font-weight:500; color:var(--text); }
-        .med-badge { font-size:11px; font-weight:500; padding:4px 12px; border-radius:20px; }
+        .med-badge { font-size:11px; font-weight:500; padding:4px 12px; border-radius:20px; white-space:nowrap; }
         .med-badge.ok { background:var(--mint-soft); color:var(--mint); }
         .med-badge.low { background:var(--honey-soft); color:var(--honey); }
         .med-badge.critical { background:var(--coral-soft); color:var(--coral); }
         .med-info { display:grid; grid-template-columns:1fr 1fr; gap:4px 12px; margin-bottom:12px; padding-left:8px; font-size:12px; }
         .med-info-label { color:var(--text-muted); }
         .med-info-value { color:var(--text-secondary); font-weight:500; }
-        .med-bar-wrap { margin-bottom:12px; padding:0 8px; }
-        .med-bar-label { display:flex; justify-content:space-between; font-size:10px; color:var(--text-muted); margin-bottom:4px; }
+        .med-bar-wrap { margin-bottom:8px; padding:0 8px; }
+        .med-bar-label { display:flex; justify-content:space-between; font-size:10px; color:var(--text-muted); margin-bottom:5px; }
+        .med-bar { position:relative; }
         .med-bar-track { height:8px; background:var(--bg-warm); border-radius:4px; overflow:hidden; }
         .med-bar-fill { height:100%; border-radius:4px; transition:width 0.4s; }
         .med-bar-fill.ok { background:linear-gradient(90deg,var(--mint-glow),var(--mint)); }
         .med-bar-fill.low { background:linear-gradient(90deg,#f5e6c8,var(--honey)); }
         .med-bar-fill.critical { background:linear-gradient(90deg,#f5d0ca,var(--coral)); }
+        /* 通院日の位置。バーがこの線を越えていれば、通院日まで持つ */
+        .med-bar-mark { position:absolute; top:-4px; bottom:-4px; width:2px; border-radius:1px; background:var(--periwinkle); }
+        .med-note { font-size:12px; padding:0 8px; margin-bottom:12px; color:var(--text-secondary); }
+        .med-note.low { color:var(--honey); }
+        .med-note.critical { color:var(--coral); }
         .med-actions { display:flex; gap:8px; padding:0 4px; }
         .med-btn { flex:1; padding:10px; border-radius:12px; border:1px solid var(--border); background:var(--card); color:var(--text-secondary); font-size:13px; font-family:inherit; cursor:pointer; transition:all 0.15s; text-align:center; }
         .med-btn:active { transform:scale(0.97); }
         .med-btn.primary { background:var(--mint); border-color:var(--mint); color:#fff; box-shadow:0 2px 6px rgba(91,181,166,0.2); }
         .med-btn.done { background:var(--mint-soft); border-color:var(--mint-glow); color:var(--mint); }
         .med-btn.skipped { background:var(--honey-soft); border-color:#ecddb8; color:var(--honey); }
-        .calendar { margin-bottom:16px; }
+
+        .calendar { margin-bottom:10px; }
         .cal-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; padding:0 4px; }
         .cal-title { font-size:15px; color:var(--text); font-weight:500; }
-        .cal-nav { background:var(--card); border:1px solid var(--border); border-radius:50%; width:32px; height:32px; color:var(--text-muted); font-size:16px; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 1px 3px rgba(0,0,0,0.04); }
+        .cal-nav { background:var(--card); border:1px solid var(--border); border-radius:50%; width:32px; height:32px; color:var(--text-muted); font-size:16px; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 1px 3px rgba(0,0,0,0.04); font-family:inherit; }
         .cal-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:2px; }
         .cal-weekday { text-align:center; font-size:10px; color:var(--text-faint); padding:6px 0; }
         .cal-day { text-align:center; padding:5px 2px; font-size:12px; border-radius:8px; min-height:38px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; }
+        .cal-day.tap { cursor:pointer; }
+        .cal-day.tap:active { background:var(--bg-warm); }
+        .cal-day.future { color:var(--text-muted); }
         .cal-day.today { font-weight:500; background:var(--mint-soft); color:var(--mint); box-shadow:inset 0 0 0 1.6px var(--mint); }
         .cal-day.other-month { color:var(--text-faint); }
         .cal-day.visit { background:var(--periwinkle-soft); box-shadow:inset 0 0 0 1.6px var(--periwinkle); }
         .cal-day.lastday { background:var(--coral-soft); box-shadow:inset 0 0 0 1.6px var(--coral); }
         .cal-dots { display:flex; gap:2px; }
         .cal-dot { width:5px; height:5px; border-radius:50%; }
+        .cal-hint { font-size:11px; color:var(--text-muted); text-align:center; margin-bottom:10px; }
         .legend { display:flex; flex-wrap:wrap; gap:10px; font-size:11px; color:var(--text-muted); margin-bottom:16px; padding:4px 8px; }
         .legend-item { display:flex; align-items:center; gap:4px; }
         .legend-dot { width:8px; height:8px; border-radius:50%; }
         .legend-day { width:8px; height:8px; border-radius:35%; }
+
+        /* 日ごとの小窓 */
+        .sheet-bg { position:fixed; inset:0; background:rgba(52,73,94,0.28); display:none; align-items:flex-end; justify-content:center; z-index:50; }
+        .sheet-bg.on { display:flex; }
+        .sheet { background:var(--bg); width:100%; max-width:460px; border-radius:20px 20px 0 0; padding:18px 16px calc(18px + env(safe-area-inset-bottom)); box-shadow:0 -6px 24px rgba(0,0,0,0.08); max-height:82vh; overflow-y:auto; }
+        .sheet-title { text-align:center; font-size:15px; font-weight:500; }
+        .sheet-sub { text-align:center; font-size:11px; color:var(--text-muted); margin:2px 0 14px; }
+        .sheet-row { background:var(--card); border:1px solid var(--border-light); border-radius:14px; padding:12px 12px 12px 18px; margin-bottom:8px; }
+        .sheet-name { display:flex; justify-content:space-between; align-items:baseline; gap:8px; font-size:13px; font-weight:500; margin-bottom:8px; }
+        .sheet-time { font-size:11px; font-weight:400; color:var(--text-muted); white-space:nowrap; }
+        .seg { display:flex; gap:6px; }
+        .seg button { flex:1; padding:9px 4px; border-radius:10px; border:1px solid var(--border); background:var(--card); font-family:inherit; font-size:12px; color:var(--text-secondary); cursor:pointer; }
+        .seg button.on.taken { background:var(--mint); border-color:var(--mint); color:#fff; }
+        .seg button.on.skipped { background:var(--honey-soft); border-color:#ecddb8; color:var(--honey); }
+        .seg button.on.none { background:var(--bg-warm); border-color:var(--border); color:var(--text-muted); }
+        .sheet-close { display:block; width:100%; margin-top:8px; }
+
         .form-label { font-size:12px; color:var(--text-muted); margin-bottom:6px; display:block; }
-        .form-input { width:100%; padding:10px 14px; background:var(--card); border:1px solid var(--border); border-radius:12px; color:var(--text); font-size:14px; font-family:inherit; -webkit-appearance:none; }
+        .form-input { width:100%; padding:10px 14px; background:var(--card); border:1px solid var(--border); border-radius:12px; color:var(--text); font-size:16px; font-family:inherit; -webkit-appearance:none; }
         .form-input:focus { outline:none; border-color:var(--mint); box-shadow:0 0 0 3px var(--mint-soft); }
         .form-input::placeholder { color:var(--text-faint); }
         .form-input[type="date"]::-webkit-calendar-picker-indicator { filter:invert(0.3); }
         .form-group { margin-bottom:14px; }
         .form-row { display:flex; gap:8px; }
-        .btn { padding:9px 16px; background:var(--card); border:1px solid var(--border); border-radius:12px; color:var(--text-secondary); cursor:pointer; font-size:12px; font-family:inherit; transition:all 0.15s; }
+        .btn { padding:10px 16px; background:var(--card); border:1px solid var(--border); border-radius:12px; color:var(--text-secondary); cursor:pointer; font-size:13px; font-family:inherit; transition:all 0.15s; }
         .btn-mint { background:var(--mint-soft); border-color:var(--mint-glow); color:var(--mint); }
         .btn-icon { background:none; border:none; color:var(--text-faint); cursor:pointer; font-size:14px; padding:4px; }
         .btn-icon:hover { color:var(--coral); }
         .section-divider { border-top:1px solid var(--border); padding-top:18px; margin-top:20px; }
         .section-title { font-size:12px; color:var(--text-muted); margin-bottom:12px; letter-spacing:0.04em; }
-        .med-list-item { display:flex; justify-content:space-between; align-items:center; padding:10px 14px; background:var(--card); border:1px solid var(--border-light); border-radius:12px; margin-bottom:6px; font-size:13px; box-shadow:0 1px 3px rgba(0,0,0,0.02); }
+        .hint { font-size:12px; color:var(--text-secondary); margin-bottom:12px; line-height:1.8; }
+        .hint.small { font-size:11px; color:var(--text-muted); margin:8px 0 0; }
+        .med-list-item { display:flex; justify-content:space-between; align-items:center; gap:8px; padding:10px 14px; background:var(--card); border:1px solid var(--border-light); border-radius:12px; margin-bottom:6px; font-size:13px; box-shadow:0 1px 3px rgba(0,0,0,0.02); }
+        .mini-input { width:48px; padding:5px 6px; border:1px solid var(--border); border-radius:8px; text-align:center; font-size:16px; font-family:inherit; color:var(--text); background:var(--card); }
+        .mini-label { font-size:11px; color:var(--text-muted); }
         .toast { position:fixed; top:150px; left:50%; transform:translateX(-50%); max-width:88%; background:var(--card); border:1px solid var(--mint); border-radius:14px; padding:12px 24px; color:var(--text-secondary); font-size:13px; box-shadow:0 4px 20px rgba(91,181,166,0.15); opacity:0; transition:opacity 0.3s; pointer-events:none; z-index:100; text-align:center; }
         .toast.show { opacity:1; }
         .empty { text-align:center; padding:32px; color:var(--text-faint); font-size:13px; }
@@ -131,193 +167,471 @@
 <body>
 <div class="container">
     <div class="header"><h1>くすりばこ</h1></div>
-
-        <div class="greeting" id="greeting"></div>
+    <div class="greeting" id="greeting"></div>
     <div class="tabs">
-        <button class="tab active" onclick="switchTab('home')">くすり</button>
-        <button class="tab" onclick="switchTab('calendar')">カレンダー</button>
-        <button class="tab" onclick="switchTab('settings')">設定</button>
+        <button class="tab active" data-tab="home" onclick="switchTab('home')">くすり</button>
+        <button class="tab" data-tab="calendar" onclick="switchTab('calendar')">カレンダー</button>
+        <button class="tab" data-tab="settings" onclick="switchTab('settings')">設定</button>
     </div>
-    <div id="home-panel" class="panel active">
 
+    <div id="home-panel" class="panel active">
         <div id="visit-banner"></div>
         <div id="med-cards"></div>
     </div>
+
     <div id="calendar-panel" class="panel">
         <div class="calendar">
             <div class="cal-header">
-                <button class="cal-nav" onclick="changeMonth(-1)">‹</button>
+                <button class="cal-nav" onclick="changeMonth(-1)" aria-label="前の月">‹</button>
                 <div class="cal-title" id="cal-title"></div>
-                <button class="cal-nav" onclick="changeMonth(1)">›</button>
+                <button class="cal-nav" onclick="changeMonth(1)" aria-label="次の月">›</button>
             </div>
             <div class="cal-grid" id="cal-grid"></div>
         </div>
+        <div class="cal-hint">日付を押すと、その日の記録をつけ直せる</div>
         <div class="legend" id="cal-legend"></div>
     </div>
+
     <div id="settings-panel" class="panel">
         <div class="section-title">📅 通院予定</div>
         <div class="form-group">
-            <label class="form-label">次回通院日</label>
+            <label class="form-label" for="next-visit">次回通院日</label>
             <input type="date" id="next-visit" class="form-input" onchange="saveSettings()">
         </div>
+
         <div class="section-divider">
             <div class="section-title">📋 補充履歴</div>
             <div id="refill-history"></div>
         </div>
+
         <div class="section-divider">
             <div class="section-title">💊 くすりの管理</div>
             <div id="med-manager"></div>
             <div style="margin-top:16px;border:1px solid var(--border);border-radius:14px;padding:16px;background:var(--card);">
-                <div class="form-group"><label class="form-label">おくすりの名前</label><input type="text" id="new-med-name" class="form-input" placeholder="例：コンサータ 27mg"></div>
-                <div style="display:flex;gap:8px;margin-bottom:12px;">
-                    <div class="form-group" style="flex:1;"><label class="form-label">1日の用量</label><input type="text" id="new-med-dose" class="form-input" placeholder="1錠"></div>
-                    <div class="form-group" style="flex:1;"><label class="form-label">手持ち数</label><input type="number" id="new-med-stock" class="form-input" placeholder="0" inputmode="numeric"></div>
+                <div class="form-group"><label class="form-label" for="new-med-name">おくすりの名前</label><input type="text" id="new-med-name" class="form-input" placeholder="例：コンサータ 27mg"></div>
+                <div class="form-row" style="margin-bottom:0;">
+                    <div class="form-group" style="flex:1;"><label class="form-label" for="new-med-per">1回の錠数</label><input type="number" id="new-med-per" class="form-input" placeholder="1" inputmode="numeric" min="1"></div>
+                    <div class="form-group" style="flex:1;"><label class="form-label" for="new-med-stock">手持ち数</label><input type="number" id="new-med-stock" class="form-input" placeholder="0" inputmode="numeric" min="0"></div>
                 </div>
-                <div style="display:flex;gap:8px;margin-bottom:12px;">
-                    <div class="form-group" style="flex:1;"><label class="form-label">服用パターン</label><select id="new-med-pattern" class="form-input"><option value="daily">毎日</option><option value="weekday">平日のみ</option><option value="asneeded">頓服</option></select></div>
-                    <div class="form-group" style="flex:1;"><label class="form-label">色</label>
-<select id="new-med-color" class="form-input">
-<option value="mint">ミント</option>
-<option value="sky">ブルー</option>
-<option value="rose">ローズ</option>
-<option value="periwinkle">パープル</option>
-<option value="moss">モス</option>
-
-<option value="lavender">ラベンダー</option>
-
-</select></div>
+                <div class="form-row" style="margin-bottom:0;">
+                    <div class="form-group" style="flex:1;"><label class="form-label" for="new-med-pattern">服用パターン</label><select id="new-med-pattern" class="form-input"><option value="daily">毎日</option><option value="weekday">平日のみ</option><option value="asneeded">頓服</option></select></div>
+                    <div class="form-group" style="flex:1;"><label class="form-label" for="new-med-color">色</label>
+                        <select id="new-med-color" class="form-input">
+                            <option value="mint">ミント</option>
+                            <option value="sky">ブルー</option>
+                            <option value="periwinkle">パープル</option>
+                            <option value="lavender">ラベンダー</option>
+                            <option value="rose">ローズ</option>
+                            <option value="terra">テラコッタ</option>
+                            <option value="honey">オレンジ</option>
+                            <option value="moss">モス</option>
+                        </select>
+                    </div>
                 </div>
                 <button class="btn btn-mint" style="width:100%;padding:12px;" onclick="addMed()">追加する</button>
             </div>
         </div>
+
+        <div class="section-divider">
+            <div class="section-title">🗂 控え</div>
+            <p class="hint">記録はこの端末の中にしかない。時々書き出しておけば、端末を替えた時や消えてしまった時に、そこから戻せる。</p>
+            <div class="form-row">
+                <button class="btn btn-mint" style="flex:1;" onclick="exportData()">控えを書き出す</button>
+                <button class="btn" style="flex:1;" onclick="document.getElementById('import-file').click()">控えから戻す</button>
+            </div>
+            <input type="file" id="import-file" accept="application/json,.json" style="display:none" onchange="importData(this)">
+            <p class="hint small" id="last-export"></p>
+        </div>
     </div>
 </div>
+
+<div id="day-sheet" class="sheet-bg" onclick="if(event.target===this)closeDay()">
+    <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-title">
+        <div class="sheet-title" id="sheet-title"></div>
+        <div class="sheet-sub" id="sheet-sub"></div>
+        <div id="sheet-list"></div>
+        <button class="btn sheet-close" onclick="closeDay()">閉じる</button>
+    </div>
+</div>
+
 <div id="toast" class="toast"></div>
+
 <script>
 const DEFAULT_MEDS=[
-    {id:'con27',name:'コンサータ 27mg',dose:'1錠',stock:0,pattern:'daily',color:'sky'},
-    {id:'con36',name:'コンサータ 36mg',dose:'1錠',stock:0,pattern:'daily',color:'rose'},
-    {id:'lex',name:'レクサプロ',dose:'1錠',stock:0,pattern:'daily',color:'terra'},
-    {id:'sleep',name:'デエビゴ',dose:'1錠',stock:0,pattern:'daily',color:'lavender'},
+    {id:'con27',name:'コンサータ 27mg',per:1,stock:0,pattern:'daily',color:'sky'},
+    {id:'con36',name:'コンサータ 36mg',per:1,stock:0,pattern:'daily',color:'rose'},
+    {id:'lex',name:'レクサプロ',per:1,stock:0,pattern:'daily',color:'terra'},
+    {id:'sleep',name:'デエビゴ',per:1,stock:0,pattern:'daily',color:'lavender'},
 ];
 const GREETINGS=["今日の服薬を確認せよ。","在庫の状況を把握しておけ。","服薬は済んだか。記録を忘れるな。","身体を整えるのも、戦の備えである。"];
 const TAKE_COMMENTS=["服用済み。","記録した。よくやった。","次も忘れずに。","一つ刻んだ。"];
 const REFILL_COMMENTS=["補充した。いつまで持つか、確認せよ。","在庫を更新した。","これでしばらく持つな。"];
 const PATTERN_LABELS={daily:'毎日',weekday:'平日のみ',asneeded:'頓服'};
-const COLOR_MAP={mint:'var(--mint)',periwinkle:'var(--periwinkle)',sky:'var(--sky)',honey:'var(--honey)',rose:'var(--rose)',lavender:'var(--lavender)',terra:'var(--terra)',moss:'var(--moss)'};
+const COLOR_MAP={mint:'var(--mint)',periwinkle:'var(--periwinkle)',sky:'var(--sky)',honey:'var(--honey)',coral:'var(--honey)',rose:'var(--rose)',lavender:'var(--lavender)',terra:'var(--terra)',moss:'var(--moss)'};
+const STATE_LABELS={taken:'のんだ',skipped:'スキップ',none:'未記録'};
+
 let meds=[],logs={},refills=[],settings={nextVisit:''};
-let calMonth=null,calYear=null,toastTimeout=null;
+let calMonth=null,calYear=null,toastTimeout=null,sheetDate=null;
 
-function getJSTDate(){const n=new Date(),j=new Date(n.toLocaleString('en-US',{timeZone:'Asia/Tokyo'}));j.setHours(j.getHours()-5);return`${j.getFullYear()}-${String(j.getMonth()+1).padStart(2,'0')}-${String(j.getDate()).padStart(2,'0')}`;}
+const $=id=>document.getElementById(id);
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 
+/* ================= 日付 ================= */
+/* 一日の切り替わりは朝5時。夜中に飲んだ分は前の日として数える */
 function getJSTNow(){return new Date(new Date().toLocaleString('en-US',{timeZone:'Asia/Tokyo'}));}
+function getJSTDate(){const j=getJSTNow();j.setHours(j.getHours()-5);return`${j.getFullYear()}-${String(j.getMonth()+1).padStart(2,'0')}-${String(j.getDate()).padStart(2,'0')}`;}
+function nowHM(){const n=getJSTNow();return`${n.getHours()}:${String(n.getMinutes()).padStart(2,'0')}`;}
 function pick(a){return a[Math.floor(Math.random()*a.length)];}
 function formatDateShort(d){const dt=new Date(d+'T00:00:00+09:00');return`${dt.getMonth()+1}/${dt.getDate()}（${'日月火水木金土'[dt.getDay()]}）`;}
 function isWeekday(d){const w=new Date(d+'T00:00:00+09:00').getDay();return w>=1&&w<=5;}
-function daysBetween(a,b){return Math.ceil((new Date(b+'T00:00:00+09:00')-new Date(a+'T00:00:00+09:00'))/864e5);}
+function daysBetween(a,b){return Math.round((new Date(b+'T00:00:00+09:00')-new Date(a+'T00:00:00+09:00'))/864e5);}
 function addDays(d,n){const dt=new Date(d+'T00:00:00+09:00');dt.setDate(dt.getDate()+n);return`${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}-${String(dt.getDate()).padStart(2,'0')}`;}
-function loadData(){const m=localStorage.getItem('medMeds');meds=m?JSON.parse(m):DEFAULT_MEDS.map(d=>({...d}));const l=localStorage.getItem('medLogs');logs=l?JSON.parse(l):{};const r=localStorage.getItem('medRefills');refills=r?JSON.parse(r):[];const s=localStorage.getItem('medSettings');if(s)settings=JSON.parse(s);document.getElementById('next-visit').value=settings.nextVisit||'';const now=getJSTNow();calMonth=now.getMonth();calYear=now.getFullYear();}
+
+/* ================= 保存 ================= */
+function loadData(){
+    try{const m=localStorage.getItem('medMeds');meds=m?JSON.parse(m):DEFAULT_MEDS.map(d=>({...d}));}catch(e){meds=DEFAULT_MEDS.map(d=>({...d}));}
+    try{logs=JSON.parse(localStorage.getItem('medLogs'))||{};}catch(e){logs={};}
+    try{refills=JSON.parse(localStorage.getItem('medRefills'))||[];}catch(e){refills=[];}
+    try{const s=JSON.parse(localStorage.getItem('medSettings'));if(s)settings=Object.assign({nextVisit:''},s);}catch(e){}
+    normalize();
+    $('next-visit').value=settings.nextVisit||'';
+    const now=getJSTNow();calMonth=now.getMonth();calYear=now.getFullYear();
+}
+/* 旧い形の記録を新しい形に読み替える。
+   記録：'taken' → {s:'taken'}。時刻 t と、在庫から引いた数 d を持てるようにする。
+   薬：用量の文字「1錠」から、1回の錠数 per を数で取り出す。 */
+function normalize(){
+    meds.forEach(m=>{
+        if(!(m.per>0)){const n=parseInt(String(m.dose||'').replace(/[^0-9]/g,''),10);m.per=n>0?n:1;}
+        m.stock=Math.max(0,parseInt(m.stock,10)||0);
+        if(!PATTERN_LABELS[m.pattern])m.pattern='daily';
+    });
+    for(const d in logs){
+        if(!logs[d]||typeof logs[d]!=='object'){delete logs[d];continue;}
+        for(const id in logs[d]){
+            const v=logs[d][id];
+            if(typeof v==='string')logs[d][id]={s:v};
+            else if(!v||!v.s)delete logs[d][id];
+        }
+        if(!Object.keys(logs[d]).length)delete logs[d];
+    }
+}
 function saveMeds(){localStorage.setItem('medMeds',JSON.stringify(meds));}
 function saveLogs(){localStorage.setItem('medLogs',JSON.stringify(logs));}
 function saveRefills(){localStorage.setItem('medRefills',JSON.stringify(refills));}
-function saveSettings(){settings.nextVisit=document.getElementById('next-visit').value;localStorage.setItem('medSettings',JSON.stringify(settings));renderHome();renderCalendar();}
-function showToast(t){const e=document.getElementById('toast');if(toastTimeout)clearTimeout(toastTimeout);e.textContent=t;e.classList.add('show');toastTimeout=setTimeout(()=>{e.classList.remove('show');},3000);}
+function saveSettingsOnly(){localStorage.setItem('medSettings',JSON.stringify(settings));}
+function saveSettings(){settings.nextVisit=$('next-visit').value;saveSettingsOnly();renderHome();renderCalendar();}
+function showToast(t){const e=$('toast');if(toastTimeout)clearTimeout(toastTimeout);e.textContent=t;e.classList.add('show');toastTimeout=setTimeout(()=>e.classList.remove('show'),3000);}
 
-function calcRemainingDays(med){if(med.stock<=0)return 0;let remaining=med.stock,days=0;const today=getJSTDate();const todayLog=(logs[today]||{})[med.id];for(let i=0;i<365;i++){const d=addDays(today,i);if(i===0&&todayLog==='taken')continue;if(med.pattern==='weekday'&&!isWeekday(d))continue;if(med.pattern==='asneeded'){days=remaining*2;break;}remaining--;if(remaining<=0)break;days=i+1;}return days;}
+/* ================= 記録 ================= */
+function logOf(d,id){return(logs[d]||{})[id]||null;}
 
-function getStockStatus(med){const days=calcRemainingDays(med);if(settings.nextVisit){const dv=daysBetween(getJSTDate(),settings.nextVisit);if(days<dv)return'critical';if(days<dv+3)return'low';}if(days<=3)return'critical';if(days<=7)return'low';return'ok';}
-function getStatusLabel(s){return s==='ok'?'余裕あり':s==='low'?'残り僅か':'⚠ 不足';}
-function takeMed(id){const today=getJSTDate();if(!logs[today])logs[today]={};logs[today][id]='taken';const med=meds.find(m=>m.id===id);if(med&&med.stock>0)med.stock--;saveMeds();saveLogs();renderHome();renderCalendar();showToast(pick(TAKE_COMMENTS));}
-function skipMed(id){const today=getJSTDate();if(!logs[today])logs[today]={};logs[today][id]='skipped';saveLogs();renderHome();renderCalendar();showToast('スキップを記録した。在庫は減らしていない。');}
-function undoMed(id){const today=getJSTDate();if(logs[today]&&logs[today][id]){const was=logs[today][id]==='taken';delete logs[today][id];if(!Object.keys(logs[today]).length)delete logs[today];if(was){const med=meds.find(m=>m.id===id);if(med)med.stock++;saveMeds();}saveLogs();renderHome();renderCalendar();showToast('取り消した。');}}
+/* ある日のある薬の記録を、指定の状態に置き換える。在庫もそれに合わせて動かす。
+   「のんだ」にした時に引いた数を d に覚えておき、外す時はその数だけ戻す。 */
+function setLog(date,id,state){
+    const med=meds.find(m=>m.id===id);if(!med)return null;
+    const cur=logOf(date,id);
+    if((cur?cur.s:'none')===state)return null;
+    let restored=0,taken=0;
+    if(cur&&cur.s==='taken'){restored=cur.d!=null?cur.d:med.per;med.stock+=restored;}
+    if(state==='none'){
+        if(logs[date]){delete logs[date][id];if(!Object.keys(logs[date]).length)delete logs[date];}
+    }else{
+        if(!logs[date])logs[date]={};
+        const e={s:state};
+        if(date===getJSTDate())e.t=nowHM();
+        if(state==='taken'){taken=Math.min(med.per,med.stock);med.stock-=taken;e.d=taken;}
+        logs[date][id]=e;
+    }
+    saveMeds();saveLogs();
+    return{restored,taken,short:state==='taken'&&taken<med.per};
+}
+
+/* ================= 在庫の勘定 ================= */
+function applies(med,d){return med.pattern==='weekday'?isWeekday(d):med.pattern==='daily';}
+function countApplicable(med,from,to){let n=0,d=from,g=0;while(d<=to&&g<1000){if(applies(med,d))n++;d=addDays(d,1);g++;}return n;}
+
+/* 在庫で何回分あるか、どの日の分まで持つか、最初に足りなくなる日はいつか。
+   今日の記録が済んでいれば（のんだ・スキップとも）、明日から数える。 */
+function coverage(med){
+    const today=getJSTDate();
+    const start=logOf(today,med.id)?addDays(today,1):today;
+    const doses=Math.floor(med.stock/med.per);
+    if(med.pattern==='asneeded')return{asneeded:true,doses,start};
+    let left=doses,d=start,last=null,g=0;
+    while(left>0&&g<1000){if(applies(med,d)){left--;last=d;}d=addDays(d,1);g++;}
+    let short=d;g=0;while(!applies(med,short)&&g<10){short=addDays(short,1);g++;}
+    return{doses,start,last,short};
+}
+
+/* 札と一言。通院日が先にあれば「通院日まで持つか」一本で決める。
+   通院日がない・過ぎた時だけ、残りの回数で決める。 */
+function stockStatus(med,cv){
+    const today=getJSTDate(),v=settings.nextVisit;
+    if(cv.asneeded){
+        if(cv.doses<=0)return{cls:'critical',label:'⚠ 切れている',note:'手持ちがない'};
+        return{cls:'ok',label:'頓服',note:`あと${cv.doses}回分`};
+    }
+    const unit=med.pattern==='weekday'?'回分':'日分';
+    if(v&&v>=today){
+        const need=countApplicable(med,cv.start,v);
+        const margin=cv.doses-need;
+        if(margin<0){
+            const before=daysBetween(cv.short,v);
+            return{cls:'critical',label:'⚠ 通院前に切れる',note:before>0?`通院日の${before}日前から切れる`:'通院当日の分が足りない'};
+        }
+        const note=margin===0?'通院日の分で、ちょうど尽きる':`通院日のあとに${margin}${unit}余る`;
+        if(margin<=3)return{cls:'low',label:'ぎりぎり',note};
+        return{cls:'ok',label:'足りる',note};
+    }
+    const note=cv.last?`${formatDateShort(cv.last)}の分まで持つ`:'手持ちがない';
+    if(cv.doses<=3)return{cls:'critical',label:'⚠ 不足',note};
+    if(cv.doses<=7)return{cls:'low',label:'残り僅か',note};
+    return{cls:'ok',label:'余裕あり',note};
+}
+
+/* バー：長さは在庫で持つ日数。通院日には縦線を引く。 */
+function barHTML(med,cv,st){
+    if(cv.asneeded)return'';
+    const today=getJSTDate(),v=settings.nextVisit;
+    const covered=cv.last?daysBetween(today,cv.last)+1:0;
+    let left,right,fill,mark=null;
+    if(v&&v>=today){
+        // 平日のみの薬で通院日が週末なら、その前の平日に線を引く
+        let md=v,g=0;while(!applies(med,md)&&md>today&&g<10){md=addDays(md,-1);g++;}
+        const markDays=daysBetween(today,md)+1;
+        const scale=Math.max(markDays+7,covered,14);
+        fill=covered/scale*100;mark=markDays/scale*100;
+        left=cv.last?`在庫 〜${formatDateShort(cv.last)}`:'在庫なし';
+        right=`通院 ${formatDateShort(v)}`;
+    }else{
+        fill=Math.min(covered/14,1)*100;
+        left=`在庫 ${covered}日分`;right='二週間';
+    }
+    return`<div class="med-bar-wrap"><div class="med-bar-label"><span>${left}</span><span>${right}</span></div><div class="med-bar"><div class="med-bar-track"><div class="med-bar-fill ${st.cls}" style="width:${fill}%"></div></div>${mark!=null?`<div class="med-bar-mark" style="left:calc(${mark}% - 1px)"></div>`:''}</div></div>`;
+}
+
+/* ================= 今日の操作 ================= */
+function takeMed(id){const r=setLog(getJSTDate(),id,'taken');renderAll();if(r&&r.short)showToast('記録した。ただ、在庫が足りていない。手持ち数を確かめよ。');else showToast(pick(TAKE_COMMENTS));}
+function skipMed(id){setLog(getJSTDate(),id,'skipped');renderAll();showToast('スキップを記録した。在庫は減らしていない。');}
+function undoMed(id){const r=setLog(getJSTDate(),id,'none');renderAll();showToast(r&&r.restored?`取り消した。在庫を${r.restored}錠戻した。`:'取り消した。');}
+
 function refillMed(id){
-    const med=meds.find(m=>m.id===id);if(!med)return;
-    const card=document.querySelector(`[data-med-id="${id}"] .med-actions`);
-    if(!card)return;
-    card.innerHTML=`<div style="display:flex;gap:8px;width:100%;align-items:center;"><input type="number" id="refill-input-${id}" class="form-input" placeholder="錠数" inputmode="numeric" style="flex:1;padding:8px 12px;font-size:14px;"><button class="med-btn primary" onclick="confirmRefill('${id}')" style="flex:none;">補充</button><button class="med-btn" onclick="renderHome()" style="flex:none;">戻る</button></div>`;
-    document.getElementById('refill-input-'+id).focus();
+    const card=document.querySelector(`[data-med-id="${id}"] .med-actions`);if(!card)return;
+    card.innerHTML=`<div style="display:flex;gap:8px;width:100%;align-items:center;"><input type="number" id="refill-input-${id}" class="form-input" placeholder="錠数" inputmode="numeric" style="flex:1;padding:8px 12px;"><button class="med-btn primary" onclick="confirmRefill('${id}')" style="flex:none;">補充</button><button class="med-btn" onclick="renderHome()" style="flex:none;">戻る</button></div>`;
+    $('refill-input-'+id).focus();
 }
 function confirmRefill(id){
-    const input=document.getElementById('refill-input-'+id);
-    if(!input)return;
-    const num=parseInt(input.value);
+    const input=$('refill-input-'+id);if(!input)return;
+    const num=parseInt(input.value,10);
     if(isNaN(num)||num<=0){showToast('正しい数を入力せよ。');return;}
     const med=meds.find(m=>m.id===id);if(!med)return;
-    med.stock+=num;
-    saveMeds();
-    refills.push({date:getJSTDate(),medId:id,medName:med.name,amount:num});
-    saveRefills();
-    renderHome();renderCalendar();
-    showToast(pick(REFILL_COMMENTS));
+    med.stock+=num;saveMeds();
+    refills.push({date:getJSTDate(),medId:id,medName:med.name,amount:num});saveRefills();
+    renderAll();showToast(pick(REFILL_COMMENTS));
 }
-function renderHome(){
-    document.getElementById('greeting').textContent=pick(GREETINGS);
-    const today=getJSTDate(),todayLogs=logs[today]||{};
-    const banner=document.getElementById('visit-banner');
-    if(settings.nextVisit){const d=daysBetween(today,settings.nextVisit);let text='';if(d>0)text=`📅 次回通院予定： ${formatDateShort(settings.nextVisit)} (あと ${d}日)`;else if(d===0)text=`📅 ${formatDateShort(settings.nextVisit)} ： 今日は通院の日である。`;else text=`📅 …通院予定日を過ぎている。確認せよ。（${d}日）`;banner.innerHTML=`<div class="visit-banner">${text}</div>`;}else{banner.innerHTML='';}
-    const container=document.getElementById('med-cards');
-    if(!meds.length){container.innerHTML='<div class="empty">薬が登録されていない。<br>設定から追加せよ。</div>';return;}
-    let html='';
-    meds.forEach(med=>{
-        const status=getStockStatus(med),remainDays=calcRemainingDays(med),ts=todayLogs[med.id],doseLabel=PATTERN_LABELS[med.pattern];
-        
-const lastDate=remainDays>0?formatDateShort(addDays(today,remainDays-1)):'—';
 
-        let pct=0;if(settings.nextVisit){const dv=daysBetween(today,settings.nextVisit);pct=dv>0?Math.min((remainDays/dv)*100,100):100;}else{pct=Math.min((remainDays/14)*100,100);}
-        const barLabel=settings.nextVisit?`${remainDays}日分 / 通院まで${daysBetween(today,settings.nextVisit)}日`:`${remainDays}日分`;
-        html+=`<div class="med-card color-${med.color}" data-med-id="${med.id}"><div class="med-card-header"><span class="med-name">${med.name}</span><span class="med-badge ${status}">${getStatusLabel(status)}</span></div><div class="med-info"><div><span class="med-info-label">手持ち </span><span class="med-info-value">${med.stock}錠</span></div><div><span class="med-info-label">残り </span><span class="med-info-value">約${remainDays}日分</span></div><div><span class="med-info-label">用量 </span><span class="med-info-value">${med.dose}（${doseLabel}）</span></div><div><span class="med-info-label">最終日 </span><span class="med-info-value">${lastDate}</span></div></div><div class="med-bar-wrap"><div class="med-bar-label"><span>在庫</span><span>${barLabel}</span></div><div class="med-bar-track"><div class="med-bar-fill ${status}" style="width:${pct}%"></div></div></div><div class="med-actions">${ts==='taken'?`<button class="med-btn done" onclick="undoMed('${med.id}')">✓ 服用済み（取消）</button>`:ts==='skipped'?`<button class="med-btn skipped" onclick="undoMed('${med.id}')">— スキップ（取消）</button>`:`<button class="med-btn primary" onclick="takeMed('${med.id}')">のんだ</button><button class="med-btn" onclick="skipMed('${med.id}')">スキップ</button>`}<button class="med-btn" onclick="refillMed('${med.id}')" style="flex:none;padding:10px 14px;">＋補充</button></div></div>`;
-    });
-    container.innerHTML=html;
+/* ================= 描画：くすり ================= */
+function renderHome(){
+    $('greeting').textContent=pick(GREETINGS);
+    const today=getJSTDate();
+    const banner=$('visit-banner');
+    if(settings.nextVisit){
+        const d=daysBetween(today,settings.nextVisit);let text='';
+        if(d>0)text=`📅 次回通院予定： ${formatDateShort(settings.nextVisit)} (あと ${d}日)`;
+        else if(d===0)text=`📅 ${formatDateShort(settings.nextVisit)} ： 今日は通院の日である。`;
+        else text=`📅 …通院予定日を過ぎている。次の日を設定せよ。（${-d}日前）`;
+        banner.innerHTML=`<div class="visit-banner">${text}</div>`;
+    }else banner.innerHTML='';
+    const container=$('med-cards');
+    if(!meds.length){container.innerHTML='<div class="empty">薬が登録されていない。<br>設定から追加せよ。</div>';return;}
+    container.innerHTML=meds.map(med=>{
+        const cv=coverage(med),st=stockStatus(med,cv),ts=logOf(today,med.id);
+        const lastLabel=cv.asneeded?'—':(cv.last?formatDateShort(cv.last):'—');
+        let actions;
+        if(ts&&ts.s==='taken')actions=`<button class="med-btn done" onclick="undoMed('${med.id}')">✓ ${ts.t?ts.t+' に服用':'服用済み'}（取消）</button>`;
+        else if(ts&&ts.s==='skipped')actions=`<button class="med-btn skipped" onclick="undoMed('${med.id}')">— スキップ（取消）</button>`;
+        else actions=`<button class="med-btn primary" onclick="takeMed('${med.id}')">のんだ</button><button class="med-btn" onclick="skipMed('${med.id}')">スキップ</button>`;
+        return`<div class="med-card color-${med.color}" data-med-id="${med.id}">
+<div class="med-card-header"><span class="med-name">${esc(med.name)}</span><span class="med-badge ${st.cls}">${st.label}</span></div>
+<div class="med-info">
+<div><span class="med-info-label">手持ち </span><span class="med-info-value">${med.stock}錠</span></div>
+<div><span class="med-info-label">残り </span><span class="med-info-value">${cv.doses}回分</span></div>
+<div><span class="med-info-label">用量 </span><span class="med-info-value">1回${med.per}錠（${PATTERN_LABELS[med.pattern]}）</span></div>
+<div><span class="med-info-label">最終日 </span><span class="med-info-value">${lastLabel}</span></div>
+</div>
+${barHTML(med,cv,st)}
+<div class="med-note ${st.cls}">${st.note}</div>
+<div class="med-actions">${actions}<button class="med-btn" onclick="refillMed('${med.id}')" style="flex:none;padding:10px 14px;">＋補充</button></div>
+</div>`;
+    }).join('');
+}
+
+/* ================= 描画：カレンダー ================= */
+function firstLogDates(){
+    const f={};
+    Object.keys(logs).sort().forEach(d=>{for(const id in logs[d])if(!f[id])f[id]=d;});
+    return f;
 }
 function renderCalendar(){
-    document.getElementById('cal-title').textContent=`${calYear}年${calMonth+1}月`;
-    const grid=document.getElementById('cal-grid'),today=getJSTDate(),weekdays=['日','月','火','水','木','金','土'];
-    // Compute last-date for each med
-    const lastDates={};
-    meds.forEach(med=>{const rd=calcRemainingDays(med);if(rd>0){const ld=addDays(today,rd-1);lastDates[ld]=lastDates[ld]||[];lastDates[ld].push(med);}});
+    $('cal-title').textContent=`${calYear}年${calMonth+1}月`;
+    const grid=$('cal-grid'),today=getJSTDate(),weekdays=['日','月','火','水','木','金','土'];
+    const lastDates={},first=firstLogDates();
+    meds.forEach(med=>{const cv=coverage(med);if(cv.last){(lastDates[cv.last]=lastDates[cv.last]||[]).push(med);}});
     let html=weekdays.map(w=>`<div class="cal-weekday">${w}</div>`).join('');
     const firstDay=new Date(calYear,calMonth,1).getDay(),daysInMonth=new Date(calYear,calMonth+1,0).getDate(),prevDays=new Date(calYear,calMonth,0).getDate();
     for(let i=firstDay-1;i>=0;i--)html+=`<div class="cal-day other-month">${prevDays-i}</div>`;
     for(let d=1;d<=daysInMonth;d++){
-        const ds=`${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`,isToday=ds===today,isVisit=ds===settings.nextVisit,isLast=!!lastDates[ds],dayLogs=logs[ds]||{};
-        let cls='cal-day';if(isToday)cls+=' today';if(isVisit)cls+=' visit';if(isLast&&!isToday&&!isVisit)cls+=' lastday';
-        let dots='';meds.forEach(med=>{const log=dayLogs[med.id],c=COLOR_MAP[med.color]||'var(--mint)';if(log==='taken')dots+=`<div class="cal-dot" style="background:${c}"></div>`;else if(log==='skipped')dots+=`<div class="cal-dot" style="background:var(--text-muted)"></div>`;else if(ds<today)dots+=`<div class="cal-dot" style="background:var(--text-faint)"></div>`;});
-        html+=`<div class="${cls}">${d}${dots?`<div class="cal-dots">${dots}</div>`:''}</div>`;
+        const ds=`${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+        const isToday=ds===today,isVisit=ds===settings.nextVisit,isLast=!!lastDates[ds],isFuture=ds>today,dayLogs=logs[ds]||{};
+        let cls='cal-day';
+        if(isToday)cls+=' today';if(isVisit)cls+=' visit';if(isLast&&!isToday&&!isVisit)cls+=' lastday';
+        cls+=isFuture?' future':' tap';
+        let dots='';
+        meds.forEach(med=>{
+            const log=dayLogs[med.id],c=COLOR_MAP[med.color]||'var(--mint)';
+            if(log&&log.s==='taken')dots+=`<div class="cal-dot" style="background:${c}"></div>`;
+            else if(log&&log.s==='skipped')dots+=`<div class="cal-dot" style="background:var(--text-muted)"></div>`;
+            // 記録なしの点は、飲む日で、その薬の記録が始まって以降の過去の日だけ
+            else if(ds<today&&applies(med,ds)&&first[med.id]&&ds>=first[med.id])dots+=`<div class="cal-dot" style="background:var(--text-faint)"></div>`;
+        });
+        const tap=isFuture?'':` onclick="openDay('${ds}')"`;
+        html+=`<div class="${cls}"${tap}>${d}${dots?`<div class="cal-dots">${dots}</div>`:''}</div>`;
     }
     const total=firstDay+daysInMonth;for(let i=1;i<=(7-total%7)%7;i++)html+=`<div class="cal-day other-month">${i}</div>`;
     grid.innerHTML=html;
-    const legend=document.getElementById('cal-legend');let lh='';
-    meds.forEach(med=>{lh+=`<div class="legend-item"><div class="legend-dot" style="background:${COLOR_MAP[med.color]}"></div>${med.name}</div>`;});
+    let lh='';
+    meds.forEach(med=>{lh+=`<div class="legend-item"><div class="legend-dot" style="background:${COLOR_MAP[med.color]}"></div>${esc(med.name)}</div>`;});
     lh+=`<div class="legend-item"><div class="legend-dot" style="background:var(--text-muted)"></div>スキップ</div>`;
+    lh+=`<div class="legend-item"><div class="legend-dot" style="background:var(--text-faint)"></div>記録なし</div>`;
     if(settings.nextVisit)lh+=`<div class="legend-item"><div class="legend-day" style="background:var(--periwinkle-soft);border:1.6px solid var(--periwinkle)"></div>通院日</div>`;
     lh+=`<div class="legend-item"><div class="legend-day" style="background:var(--coral-soft);border:1.6px solid var(--coral)"></div>在庫最終日</div>`;
-    legend.innerHTML=lh;
+    $('cal-legend').innerHTML=lh;
 }
 function changeMonth(delta){calMonth+=delta;if(calMonth<0){calMonth=11;calYear--;}if(calMonth>11){calMonth=0;calYear++;}renderCalendar();}
-function renderMedManager(){
-    const c=document.getElementById('med-manager');
-    if(!meds.length){c.innerHTML='<div class="empty">薬の登録なし</div>';return;}
-    c.innerHTML=meds.map((med,i)=>`<div class="med-list-item"><div><div style="font-weight:500;">${med.name}</div><div style="font-size:11px;color:var(--text-muted);">${med.dose} / ${PATTERN_LABELS[med.pattern]}</div></div><div style="display:flex;align-items:center;gap:8px;"><input type="number" value="${med.stock}" style="width:50px;padding:5px 6px;border:1px solid var(--border);border-radius:8px;text-align:center;font-size:13px;font-family:inherit;color:var(--text);background:var(--card);" onchange="updateStock(${i},this.value)" inputmode="numeric"><span style="font-size:11px;color:var(--text-muted);">錠</span><button class="btn-icon" onclick="removeMed(${i})">✕</button></div></div>`).join('');
-}
-function renderRefillHistory(){
-    const c=document.getElementById('refill-history');
-    if(!refills.length){c.innerHTML='<div class="empty" style="padding:16px;">補充の記録はまだない。</div>';return;}
-    const sorted=[...refills].reverse();
-    c.innerHTML=sorted.slice(0,20).map((r,i)=>{
-        const idx=refills.length-1-i;
-        return`<div class="med-list-item"><div><div style="font-weight:400;">${formatDateShort(r.date)}</div><div style="font-size:12px;color:var(--text-secondary);">${r.medName} ＋${r.amount}錠</div></div><button class="btn-icon" onclick="deleteRefill(${idx})">✕</button></div>`;
+
+/* ---- 日ごとの小窓 ---- */
+function openDay(ds){sheetDate=ds;renderSheet();$('day-sheet').classList.add('on');document.body.style.overflow='hidden';}
+function closeDay(){$('day-sheet').classList.remove('on');document.body.style.overflow='';sheetDate=null;}
+function renderSheet(){
+    const ds=sheetDate,today=getJSTDate();
+    $('sheet-title').textContent=`${formatDateShort(ds)}の服薬`;
+    $('sheet-sub').textContent=ds===today?'今日の分':'「のんだ」にすると在庫から引き、外すと戻す';
+    if(!meds.length){$('sheet-list').innerHTML='<div class="empty">薬が登録されていない。</div>';return;}
+    $('sheet-list').innerHTML=meds.map(med=>{
+        const log=logOf(ds,med.id),cur=log?log.s:'none';
+        let time='';
+        if(log&&log.s==='taken')time=log.t?`${log.t} に服用`:'時刻の記録なし';
+        else if(log&&log.s==='skipped')time='スキップ';
+        else if(!applies(med,ds)&&med.pattern!=='asneeded')time='飲まない日';
+        const btn=st=>`<button class="${cur===st?'on '+st:''}" onclick="sheetSet('${med.id}','${st}')">${STATE_LABELS[st]}</button>`;
+        return`<div class="sheet-row color-${med.color}"><div class="sheet-name"><span>${esc(med.name)}</span><span class="sheet-time">${time}</span></div><div class="seg">${btn('taken')}${btn('skipped')}${btn('none')}</div></div>`;
     }).join('');
 }
-function deleteRefill(idx){
-    if(!confirm('この補充記録を削除する。在庫数は手動で修正せよ。'))return;
-    refills.splice(idx,1);saveRefills();renderRefillHistory();
-    showToast('補充記録を削除した。');
+function sheetSet(id,state){
+    const med=meds.find(m=>m.id===id);if(!med||!sheetDate)return;
+    const r=setLog(sheetDate,id,state);
+    renderSheet();renderAll();
+    if(!r)return;
+    const parts=[];
+    if(r.restored)parts.push(`在庫を${r.restored}錠戻した`);
+    if(state==='taken')parts.push(r.short?'在庫が足りず、引ききれていない':`在庫から${r.taken}錠引いた`);
+    showToast(`${med.name}：${STATE_LABELS[state]}。`+(parts.length?parts.join('、')+'。':''));
 }
-function updateStock(i,v){meds[i].stock=parseInt(v)||0;saveMeds();renderHome();}
-function addMed(){const name=document.getElementById('new-med-name').value.trim(),dose=document.getElementById('new-med-dose').value.trim(),stock=parseInt(document.getElementById('new-med-stock').value)||0,pattern=document.getElementById('new-med-pattern').value,color=document.getElementById('new-med-color').value;if(!name){showToast('薬の名前を入力せよ。');return;}meds.push({id:'med_'+Date.now(),name,dose:dose||'1錠',stock,pattern,color});saveMeds();document.getElementById('new-med-name').value='';document.getElementById('new-med-dose').value='';document.getElementById('new-med-stock').value='';renderMedManager();renderHome();renderCalendar();showToast(`「${name}」を追加した。`);}
-function removeMed(i){const name=meds[i].name;if(!confirm(`「${name}」を削除する。よいな？`))return;meds.splice(i,1);saveMeds();renderMedManager();renderHome();renderCalendar();showToast(`「${name}」を削除した。`);}
-function switchTab(name){document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));const labels={home:'ホーム',calendar:'カレンダー',settings:'設定'};document.querySelectorAll('.tab').forEach(t=>{if(t.textContent===labels[name])t.classList.add('active');});document.getElementById(`${name}-panel`).classList.add('active');if(name==='calendar')renderCalendar();if(name==='settings'){renderMedManager();renderRefillHistory();}}
+
+/* ================= 描画：設定 ================= */
+function renderMedManager(){
+    const c=$('med-manager');
+    if(!meds.length){c.innerHTML='<div class="empty">薬の登録なし</div>';return;}
+    c.innerHTML=meds.map((med,i)=>`<div class="med-list-item"><div style="min-width:0;"><div style="font-weight:500;">${esc(med.name)}</div><div style="font-size:11px;color:var(--text-muted);">${PATTERN_LABELS[med.pattern]}</div></div><div style="display:flex;align-items:center;gap:6px;flex:none;"><span class="mini-label">1回</span><input type="number" class="mini-input" value="${med.per}" min="1" inputmode="numeric" onchange="updatePer(${i},this.value)" aria-label="1回の錠数"><span class="mini-label">手持ち</span><input type="number" class="mini-input" value="${med.stock}" min="0" inputmode="numeric" onchange="updateStock(${i},this.value)" aria-label="手持ち数"><button class="btn-icon" onclick="removeMed(${i})" aria-label="削除">✕</button></div></div>`).join('');
+}
+function renderRefillHistory(){
+    const c=$('refill-history');
+    if(!refills.length){c.innerHTML='<div class="empty" style="padding:16px;">補充の記録はまだない。</div>';return;}
+    c.innerHTML=[...refills].reverse().slice(0,20).map((r,i)=>{
+        const idx=refills.length-1-i;
+        return`<div class="med-list-item"><div><div>${formatDateShort(r.date)}</div><div style="font-size:12px;color:var(--text-secondary);">${esc(r.medName)} ＋${r.amount}錠</div></div><button class="btn-icon" onclick="deleteRefill(${idx})" aria-label="削除">✕</button></div>`;
+    }).join('');
+}
+function renderExportInfo(){$('last-export').textContent=settings.lastExport?`前回の書き出し：${formatDateShort(settings.lastExport)}`:'まだ書き出していない。';}
+function deleteRefill(idx){
+    const r=refills[idx];if(!r)return;
+    const med=meds.find(m=>m.id===r.medId);
+    const msg=med?`この補充記録を消し、在庫からも${r.amount}錠引く。よいな？`:'この補充記録を消す。（その薬はもう登録にない）';
+    if(!confirm(msg))return;
+    let taken=0;
+    if(med){taken=Math.min(r.amount,med.stock);med.stock-=taken;saveMeds();}
+    refills.splice(idx,1);saveRefills();
+    renderAll();
+    showToast(med?`補充記録を消した。在庫から${taken}錠引いた。`:'補充記録を消した。');
+}
+function updateStock(i,v){meds[i].stock=Math.max(0,parseInt(v,10)||0);saveMeds();renderAll();}
+function updatePer(i,v){meds[i].per=Math.max(1,parseInt(v,10)||1);saveMeds();renderAll();}
+function addMed(){
+    const name=$('new-med-name').value.trim();
+    const per=Math.max(1,parseInt($('new-med-per').value,10)||1);
+    const stock=Math.max(0,parseInt($('new-med-stock').value,10)||0);
+    const pattern=$('new-med-pattern').value,color=$('new-med-color').value;
+    if(!name){showToast('薬の名前を入力せよ。');return;}
+    meds.push({id:'med_'+Date.now(),name,per,stock,pattern,color});saveMeds();
+    $('new-med-name').value='';$('new-med-per').value='';$('new-med-stock').value='';
+    renderAll();showToast(`「${name}」を追加した。`);
+}
+function removeMed(i){const name=meds[i].name;if(!confirm(`「${name}」を削除する。よいな？`))return;meds.splice(i,1);saveMeds();renderAll();showToast(`「${name}」を削除した。`);}
+
+/* ================= 控え ================= */
+function exportData(){
+    const today=getJSTDate();
+    const data={app:'kusuribako',version:2,exported:new Date().toISOString(),meds,logs,refills,settings};
+    const name=`kusuribako_${today.replace(/-/g,'')}.json`;
+    const file=new File([JSON.stringify(data,null,1)],name,{type:'application/json'});
+    const done=()=>{settings.lastExport=today;saveSettingsOnly();renderExportInfo();};
+    if(navigator.canShare&&navigator.canShare({files:[file]})){
+        navigator.share({files:[file],title:name}).then(done).catch(()=>{});
+        return;
+    }
+    const a=document.createElement('a');a.href=URL.createObjectURL(file);a.download=name;
+    document.body.appendChild(a);a.click();
+    setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},1000);
+    done();showToast('控えを書き出した。');
+}
+function importData(input){
+    const f=input.files&&input.files[0];input.value='';
+    if(!f)return;
+    const rd=new FileReader();
+    rd.onload=()=>{
+        let data;
+        try{data=JSON.parse(rd.result);}catch(e){showToast('読めないファイルである。');return;}
+        if(!data||!Array.isArray(data.meds)||typeof data.logs!=='object'){showToast('くすりばこの控えではないようだ。');return;}
+        const when=data.exported?new Date(data.exported).toLocaleDateString('ja-JP'):'日付不明';
+        if(!confirm(`今の記録を、この控え（${when}）で置き換える。よいな？`))return;
+        meds=data.meds;logs=data.logs||{};refills=Array.isArray(data.refills)?data.refills:[];
+        settings=Object.assign({nextVisit:''},data.settings||{});
+        normalize();saveMeds();saveLogs();saveRefills();saveSettingsOnly();
+        $('next-visit').value=settings.nextVisit||'';
+        renderAll();showToast('控えから戻した。');
+    };
+    rd.readAsText(f);
+}
+
+/* ================= 全体 ================= */
+function renderAll(){
+    renderHome();renderCalendar();
+    if($('settings-panel').classList.contains('active')){renderMedManager();renderRefillHistory();renderExportInfo();}
+}
+function switchTab(name){
+    document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===name));
+    document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+    $(`${name}-panel`).classList.add('active');
+    if(name==='calendar')renderCalendar();
+    if(name==='settings'){renderMedManager();renderRefillHistory();renderExportInfo();}
+}
+
 loadData();renderHome();renderCalendar();
+/* 端末の容量が逼迫しても、記録を消されにくくする */
+if(navigator.storage&&navigator.storage.persist)navigator.storage.persist().catch(()=>{});
+/* 日付をまたいで開き直した時に描き直す */
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)renderAll();});
 </script>
 </body>
 </html>
